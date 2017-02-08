@@ -1,7 +1,7 @@
 'Part 2 - Import chipmunk
 
 '1) Enable the GameObject to have a Body and Space and set up an InitPhysics method
-'2) Add a chipmunk Space the the SpaceCraft object.
+'2) Add a chipmunk Space in the SpaceCraft class.
 '3) Write some maintainence functions to handle adding and removing from the Space
 '4) Use a Chipmunk bounding box query to draw all objects on screen (in this case just the player).
 
