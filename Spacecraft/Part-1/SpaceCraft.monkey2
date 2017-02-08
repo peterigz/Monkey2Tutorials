@@ -1,3 +1,11 @@
+'Part 1 - Set up the window and GameObject/Player Object
+
+'1) Create a SpaceCraft class that extends Window
+'2) Prepare some methods to draw and update the screen
+'3) Make a GameObject Class which will be the base class for all our game objects
+'4) Implement a simple Component class for giving game objects functionality
+'5) Create a Player class with a control Component and get it drawing to the screen
+
 'Give our game a namespace, we probably won't need it but it's good practice
 Namespace spacecraft
 
