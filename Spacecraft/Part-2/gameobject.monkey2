@@ -3,12 +3,12 @@
 Namespace spacecraft
 
 'The game object class will be the main class that handles all of our game objects
-'We will be extending this class to create our different object classes, for example "Player"
+'We will be extending this class to create our different object classes, for example "Player" or "Rock"
 Class GameObject
 	
 	'Store the object XY coordinates in the game world
 	Field XY:Vec2f = New Vec2f(0, 0)
-	'The color of the object
+	'The color of the object. Note that colour values range from 0 to 1, not 0 to 255
 	Field Color:Color = New Color(1, 1, 1, 1)
 	'The angle that the object is drawn at
 	Field Rotation:Float
@@ -18,9 +18,9 @@ Class GameObject
 	Field Handle:Vec2f = New Vec2f(0.5, 0.5)
 	'Store the image of the object
 	Field Image:Image
-	'The components of the objects. In order to give our gameobjects different funcitonality depending on what they are
+	'The components of the objects. In order to give our gameobjects different functionality depending on what they are,
 	'we will be using a components based system, where we can make each component make the object do different things.
-	'Those things could be player control system, physics, collsions etc.
+	'Those things could be a player control system, physics, collsions etc.
 	Field Components:Stack<Component> = New Stack<Component>
 	'each gameobject will have a chipmunk body and shape for handling the physics and collisions
 	Field Shape:cpShape
@@ -35,7 +35,7 @@ Class GameObject
 	
 	Method New(game:SpaceCraft)
 		Game = game
-		'Self reference the GameObject
+		'Self reference the GameObject, this will be used to pass the object into chipmunk queries and collision checks
 		Me = Self
 	End
 	
@@ -59,7 +59,7 @@ Class GameObject
 		Return c
 	End
 	
-	'Let's initialise the physics for the object. By defualt we'll use circle shapes as they are fastest and
+	'Let's initialise the physics for the object. By default we'll use circle shapes as they are fastest and
 	'good enough for our needs. Parameters are:
 	'@mass: How heavy the object is.
 	'@radius: The size of the collision radius
@@ -71,7 +71,8 @@ Class GameObject
 	'@mask: Here you can set which other groups in the space this object should be able to interact with
 	Method InitPhysics(mass:Float, radius:Float, collisiontype:Int, friction:Float, category:UInt, mask:UInt)
   
-		'The moment of inertia is like mass for rotation
+		'The moment of inertia is like mass for rotation. i don't understand it much either but thankfully
+		'this function knows what it's doing!
 		'Note that cpvzero is a 0 vector which comes from chipmunk
 		Local moment:=cpMomentForCircle( mass, 0, radius, cpvzero )
 		
@@ -87,7 +88,7 @@ Class GameObject
 		Shape.CollisionType = collisiontype
 		'Use the Me field to store a pointer to this object in the shape's "UserData". We can use this later to 
 		'grab this GameObject when we're detecting collisions between objects and also when we're using the Space
-		'to query objects that fall with a certain area - for example the area of the screen.
+		'to query objects that fall within a certain area - for example the area of the screen.
 		Shape.UserData = Varptr(Me)
 		'A shape filter is used to determine which group of objects should collide with each other.
 		cpShapeSetFilter(Shape, cpShapeFilterNew(ULong(0), category, mask))
@@ -110,6 +111,5 @@ Class Component Abstract
 	
 	'All components we create will have an update method that we override to give it whatever functionality that we need 
 	Method Update() Abstract
-	
 	
 End

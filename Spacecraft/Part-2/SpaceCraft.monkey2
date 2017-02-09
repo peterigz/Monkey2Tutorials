@@ -14,7 +14,7 @@ Namespace spacecraft
 'Mojo handles all of our graphics drawing
 #Import "<mojo>"
 'chipmunk is a wrapper for the popular 2d physics library that can manage all of our collisions, physics
-'and also off screen culling
+'and also off screen culling so that we're not rendering more than we need to
 #Import "<chipmunk>"
 'Our own individual files for including
 #Import "gameobject"
@@ -23,17 +23,18 @@ Namespace spacecraft
 'Import everything that's in our assets folder ready for using
 #Import "assets/"
 
+'We also need to tell Monkey2 which modules we're "Using"
 Using std..
 Using mojo..
 Using chipmunk..
 
-'Create some groups for our collision groups. Collision groups are used to determined which objects should be
+'Create some Constants for our collision groups. Collision groups are used to determined which objects should be
 'allowed to collide with each other in the chipmunk space. Groups are assigned a bit in a 32bit bitmask, so we
-'can use "Shl" to shift our bits to the left to create each group. For example group 1 is:
+'can use "Shl" command to shift our bits to the left to create each group. For example group 1 is:
 '00000000000000000000000000000001
 'Then if we shift that bit to the left we make group 2:
 '00000000000000000000000000000010
-'And so on. Also note an unsigned int is used as we don't need to worry about negative numbers
+'And so on. Also note that an unsigned int (UInt) is used as we don't need to worry about negative numbers
 Const MapTiles:=UInt(1)               ' = 00000000000000000000000000000001
 Const Players:=UInt(1 Shl 1)          ' = 00000000000000000000000000000010
 Const Rocks:=UInt(1 Shl 2)            ' = 00000000000000000000000000000100
@@ -44,20 +45,21 @@ Const PlayerSensors:=UInt(1 Shl 4)    ' = 00000000000000000000000000010000
 'make the screen space of the game the same no matter what the actual resolution is.
 Global VirtualResolution:Vec2f = New Vec2f(800, 600)
 
-'Our main window class
+'Our main window class which extends the mojo Window class
 Class SpaceCraft Extends Window
 	'A field to store our player
 	Field Player:Player
 	
-	'A timer to set how many times the game should be updated per frame.
+	'A timer to set how many times the game logic should be updated per frame.
 	Field UpdateTimer:Timer
 	
-	'Because we will have a world that you can move about in, we need someway of storing where the camera is
+	'Because we will have a world that you can move about in, we need some way of storing where the camera is
 	'in that world so that the game objects can be drawn in the right places by offsetting their coordinates 
 	'by this vector
 	Field Origin:Vec2f
 	
-	'cpSpace is from chipmunk and it's used to manage all of our objects for us.
+	'cpSpace is from chipmunk and it's used to manage all of our objects for us. Every GameObject that we create
+	'will be added to the space
 	Field Space:cpSpace
 	
 	'It's useful to store the canvas where the game is drawn to so we can access it easily elsewhere
@@ -66,16 +68,16 @@ Class SpaceCraft Extends Window
 	'There's a rule with adding and removing things to the chipmunk space: You can't do it while you're looping
 	'through objects in the space. You're doing this any time you're checking for collisions or querying objects
 	'in the space. To manage this we can use 2 stacks to temporarily store objects that we want to remove or add
-	'to the space, and add them after we've finished sorting out all the collisions and rendering etc.
+	'to the space, and then add them after we've finished sorting out all the collisions and rendering etc.
 	Field AddToSpace:Stack<GameObject>
 	Field RemoveFromSpace:Stack<GameObject>
 	
 	'This is a reference to Self so that we can use it as a pointer to pass into chipmunk queries. See the chipmunk
-	'queries in action in Update and RenderSpace
+	'queries in action in Update and RenderSpace methods
 	Field Me:SpaceCraft
 
 	Method New( title:String="Spacecraft",width:Int=800,height:Int=600,flags:WindowFlags=WindowFlags.Resizable )
-
+		'Call the "New" method in the parent class that we're extending
 		Super.New( title,width,height,flags )
 		
 		'Create our stacks for adding and removing to/from the Space
@@ -91,13 +93,14 @@ Class SpaceCraft Extends Window
 	'method where we setup all our variables with the initial values
 	Method InitGame()
 	
-		'Set our game to update 60 times every second. Wee pass in in the method that we want called on each update.
+		'Set our game to update 60 times every second. We pass in in the method that we want called on each update.
 		UpdateTimer = New Timer(60, OnUpdate)
 		
 		'Create our chipmunk space
 		Space = cpSpaceNew()
 		
 		'Create a new player and load in an image for it. Set it to some initial coordinates and scale it down a bit.
+		'See the Player and GameObject classes for how the physics are set up and the object is added to the Space
 		Player = New Player(Self)
 		Player.Image = Image.Load("asset::Player/player.png")
 		Player.XY = New Vec2f(400,200)
@@ -114,18 +117,19 @@ Class SpaceCraft Extends Window
 		RemoveFromSpace.Add(o)
 	End Method
 	
-	'This method will be run at the end of our update routine when it's safe to add and remove stuff to/from the Chipmunk Space
+	'This method will be run at the end of our update routine when it's safe to add and remove GameObjects to/from the Chipmunk Space
 	Method UpdateSpace()
-		'loop through each stack and Add/Remove the body and shape of each object in the stack
+		'loop through each stack and Add the body and shape of each object in the stack to the Space
 		For Local o:=Eachin AddToSpace
 			Space.AddBody( o.Body )
 			Space.AddShape( o.Shape )
 		Next
+		'loop through each stack and Remove the body and shape of each object in the stack from the Space
 		For Local o:=Eachin RemoveFromSpace
 			Space.RemoveBody( o.Body )
 			Space.RemoveShape( o.Shape )
 		Next
-		'Clear the stacks ready for the next update
+		'Clear the stacks so they're empty and ready for the next update
 		AddToSpace.Clear()
 		RemoveFromSpace.Clear()
 	End
@@ -145,10 +149,10 @@ Class SpaceCraft Extends Window
 		'Scale the canvas so that the virtual resolution will always fit in the screen.
 		canvas.Scale(Width / VirtualResolution.x, Height / VirtualResolution.y)
 		
-		'Call our render world method which will render all of our game objects.
+		'Call our render space method which will render all of our game objects.
 		RenderSpace()
 		
-		'We've finished with the canvas matrix so pop it
+		'We've finished with the canvas matrix so pop it off the internal matrix stack
 		canvas.PopMatrix()
 		
 		'Draw any useful info text for debugging here, after the popmatrix, so that it won't be scaled.
@@ -158,6 +162,7 @@ Class SpaceCraft Extends Window
 	'This method will convert screen coordinates into world coordinates (for example the mouse coordinates)
 	'It will also take into account the current virtual resolution
 	Method ScreenToWorld:Vec2f(screen:Vec2f)
+		'Note: /= is a shortcut way of saying screen = screen / New Vec2f...
 		screen/=New Vec2f(Width / VirtualResolution.x, Height / VirtualResolution.y)
 		Return screen + Origin
 	End
@@ -172,13 +177,14 @@ Class SpaceCraft Extends Window
 	End
 
 	Method RenderSpace()		
-		'Create a shape filter which we will use to determine which objects in the space will be drawn
+		'Create a shape filter which we will use to determine which objects in the space will be drawn (so far we only have Players)
 		Local spacefilter:=cpShapeFilterNew( ULong(0), Players|MapTiles|Rocks,  Players|MapTiles|Rocks)
 		
 		'This is how we query the chipmunk space with an area. We only want to render the screen so we use the 
 		'width and height of the window. To define the Bounding Box (the area that is used to query the space)
-		'we use a chipmunk query called cpBBNew. We also need to tell the query which function to call for each
-		'object that it finds in the are
+		'we use a chipmunk function called cpBBNew. We also need to tell the query which function to call for each
+		'object that it finds in the area which in this case is "DrawSpaceCallBack". Finally we pass a pointer to the Me
+		'field in this class so that we can access the CurrentCanvas for drawing to.
 		cpSpaceBBQuery(Space, cpBBNew(0, 0, Width, Height), spacefilter, DrawSpaceCallBack, Varptr Me)
 	End
 	
@@ -188,15 +194,15 @@ Class SpaceCraft Extends Window
 	'SpaceCraft instance so we can have access to the current canvas and various other things.
 	Function DrawSpaceCallBack(shape:cpShape, data:Void Ptr)
 		'The next 2 lines look a little confusing but it's quite straightforward. Firstly, the UserData field contained
-		'in the shape contains our GameObject which we want to draw, so we can "Cast" it to a GameObject. We need to do 
+		'in the shape contains a pointer to our GameObject which we want to draw, so we can "Cast" it to a GameObject. We need to do 
 		'this because on its own the UserData field is just a pointer to a variable, so we need to tell Monkey 2 what type
 		'of object is at the end of that memory address. So we tell it its a GameObject Ptr with the below line. All the [0]
-		'means is that we want to cast the first address in the array which is starting point of the GameObject
+		'means is that we want to cast the first address in the array of date which is the starting point of the GameObject
 		Local gobj:=Cast<GameObject Ptr>(shape.UserData)[0]
 		'Then we do the same by casting data parameter to a SpaceCraft object (our Window)
 		Local thegame:=Cast<SpaceCraft Ptr>(data)[0]
 		'If we successfully cast the GameObject ok then render it to the sreen.
-		If gobj
+		If gobj And thegame
 			gobj.Draw(thegame.CurrentCanvas)
 		End
 	End

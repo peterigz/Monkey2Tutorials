@@ -1,6 +1,6 @@
 Namespace spacecraft
 
-'A player class which extends the GameObject class. this means that it wil inherit all of the functionality 
+'A player class which extends the GameObject class. this means that it will inherit all of the functionality 
 'contained in the GameObject class.
 Class Player Extends GameObject
 	
@@ -19,7 +19,7 @@ Class Player Extends GameObject
 	
 End
 
-'The player will need to be controlled, so we can use make a new Controlls class that extends Component
+'The player will need to be controlled, so we can use make a new Controls class that extends Component
 Class Controls Extends Component
 	'Store a reference to the player
 	Field Player:Player
@@ -39,11 +39,9 @@ Class Controls Extends Component
 		Player.Facing = target - Player.XY
 		'Normalize the Facing vector
 		Player.Facing = Player.Facing.Normalize()
-		'Use the facing vector calculate the angle of the player
+		'Use the facing vector calculate the angle of the player.
+		'Note: The image you use should be facing downwards so that it lines up and faces in the correct direction.
 		Player.Rotation = ATan2(Player.Facing.x, Player.Facing.y)
-		
-		'Out image doesn't naturally line up how we want so offset it a bit (3.14159rad is equal to 180 degrees)
-		Player.Rotation = Player.Rotation + 3.14159
 	End
 
 End
