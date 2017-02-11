@@ -33,9 +33,6 @@ Class SpaceCraft Extends Window
 	'A field to store our player
 	Field Player:Player
 	
-	'A timer to set how many times the game should be updated per frame.
-	Field UpdateTimer:Timer
-	
 	'Because we will have a world that you can move about in, we need someway of storing where the camera is
 	'in that world so that the game objects can be drawn in the right places by offsetting their coordinates 
 	'by this vector
@@ -53,9 +50,6 @@ Class SpaceCraft Extends Window
 	
 	'method where we setup all our variables with the initial values
 	Method InitGame()
-	
-		'Set our game to update 60 times every second. Wee pass in in the method that we want called on each update.
-		UpdateTimer = New Timer(60, OnUpdate)
 		
 		'Create a new player and load in an image for it. Set it to some initial coordinates and scale it down a bit.
 		Player = New Player(Self)
@@ -66,6 +60,10 @@ Class SpaceCraft Extends Window
 
 	Method OnRender( canvas:Canvas ) Override
 		CurrentCanvas = canvas
+		
+		'Call our OnUpdate method before any rendering. Note that we're not using and kind of timing code and just relying
+		'on the Monitor refresh rate. This can be enhanced at some point.
+		OnUpdate()
 	
 		'Request a render form the app
 		App.RequestRender()
