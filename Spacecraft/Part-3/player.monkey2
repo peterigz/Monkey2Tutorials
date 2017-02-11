@@ -149,6 +149,11 @@ Class Controls Extends Component
 			Strafing = False
 		End If
 		
+		If Keyboard.KeyDown(MoveDown)
+			Local reversevec:Vec2f = New Vec2f(-Player.Facing.x, -Player.Facing.y)
+			Velocity+=reversevec * Accelleration
+		End If
+		
 		'Now we apply the velocity to the Chipmunk body field of the player. Do do this we use a couple of chipmunk
 		'functions: cpBodySetVelocity, and cpvadd which is basically a way of adding 2 chipmunk vectors together. In this
 		'case we're adding the current velocity of the body (cpBodyGetVelocity), and the just recently calculated
