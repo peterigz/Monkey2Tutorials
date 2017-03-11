@@ -36,11 +36,11 @@ Class TileSet
 				Select file["type"].ToString()
 					Case "poly"
 						'assign the handle of the image
-						Tiles[index].Handle = New Vec2f(file["handlex"].ToNumber(),file["handley"].ToNumber())
+						Tiles[index].Offset = New Vec2f(file["handlex"].ToNumber(),file["handley"].ToNumber())
 						'Get the collision vertices for the poly from the file
 						Tiles[index].Verts = JsonFloatArray(file["verts"].ToArray())
 					Case "box"
-						Tiles[index].Handle = New Vec2f(file["handlex"].ToNumber(),file["handley"].ToNumber())
+						Tiles[index].Offset = New Vec2f(file["handlex"].ToNumber(),file["handley"].ToNumber())
 						'Grab the width and height from the file
 						Tiles[index].Width = file["width"].ToNumber()
 						Tiles[index].Height = file["height"].ToNumber()
@@ -76,6 +76,9 @@ Class Tile Extends GameObject
 	'If the tile is a simple box then store the width and height
 	Field Width:Float
 	Field Height:Float
+	
+	'And offset that we can use to make sure that the Chipmunk collision box aligns with the tile
+	Field Offset:Vec2i
 	
 	'Default constuctor
 	Method New()
