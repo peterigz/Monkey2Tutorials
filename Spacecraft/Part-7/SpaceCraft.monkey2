@@ -1,5 +1,7 @@
 'Part 7 - Make the tiles take into account adjacent nodes to draw the appropriate tiles in the world
-'1) Alter the AssignTiles method to add tiles to the space according to surrounding occupied nodes
+'1) Alter the AssignTiles method to create four tiles for each node
+'2) Create AssignTile to assign the correct tile image according to surrounding nodes
+'3) Update the erase method to erase all tiles as necessary.
 
 'Give our game a namespace, we probably won't need it but it's good practice
 Namespace spacecraft
