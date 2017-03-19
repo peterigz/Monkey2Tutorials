@@ -40,3 +40,15 @@ Some example code for the Monkey2 programming language
 1) Alter the AssignTiles method to create four tiles for each node
 2) Create AssignTile to assign the correct tile image according to surrounding nodes
 3) Update the erase method to erase all tiles as necessary.
+
+### Part 8 - Use TimelineFX to shoot a laser beam
+1) Import TimelineFX and load in the effects library
+2) Add a class to create the different weapons and utilities the ship can fire/use
+3) Extend that class and make a laser beam class
+4) Add controls to the player to fire the laser on left mouse (update the map drawing controls to something else as well)
+
+### Part 9 - Use TimelineFX to shoot a laser beam
+1) Import TimelineFX and load in the effects library
+2) Add a class to create the different weapons and utilities the ship can fire/use
+3) Extend that class and make a laser beam class
+4) Add controls to the player to fire the laser on left mouse (update the map drawing controls to something else as well)
