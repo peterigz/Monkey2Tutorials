@@ -52,3 +52,10 @@ Some example code for the Monkey2 programming language
 2) Add a class to create the different weapons and utilities the ship can fire/use
 3) Extend that class and make a laser beam class
 4) Add controls to the player to fire the laser on left mouse (update the map drawing controls to something else as well)
+
+### Part 10 - Use Raycasting in Chipmunk to have the laser hit the maptiles
+1) Start with some bug fixing with the virtual screen resolution
+2) Create a segment query in chipmunk to handle the raycasting
+3) Add a sparks particle effect at the point of impact
+4) Add a particle effect for the player and a thruster effect too
+5) Set the texture filter to linear for more crisper graphics
