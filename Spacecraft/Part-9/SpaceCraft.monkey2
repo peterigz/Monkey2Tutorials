@@ -1,4 +1,4 @@
-'Part 8 - Use TimelineFX to shoot a laser beam
+'Part 9 - Use TimelineFX to shoot a laser beam
 '1) Import TimelineFX and load in the effects library
 '2) Add a class to create the different weapons and utilities the ship can fire/use
 '3) Extend that class and make a laser beam class
