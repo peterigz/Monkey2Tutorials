@@ -59,3 +59,9 @@ Some example code for the Monkey2 programming language
 3) Add a sparks particle effect at the point of impact
 4) Add a particle effect for the player and a thruster effect too
 5) Set the texture filter to linear for more crisper graphics
+
+### Part 11 - Destroy the map tiles with the laser, and use a matrix to position points on the player
+1) Use a matrix to calulate points on the player as it rotates to offset the laser and thrusters
+2) Make the maptiles destructable by giving them properties and the ability to take damage
+3) Add a glow effect for map tiles that are being mined
+4) Add an explosion effect for when a tile is destroyed
