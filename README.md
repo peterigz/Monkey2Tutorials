@@ -65,3 +65,8 @@ Some example code for the Monkey2 programming language
 2) Make the maptiles destructable by giving them properties and the ability to take damage
 3) Add a glow effect for map tiles that are being mined
 4) Add an explosion effect for when a tile is destroyed
+
+### Part 12 - Add rocket objects that appear after mining a map tile
+1) Create a new RockObject class that extends Gameobject
+2) Use Chipmunk to handle the physics
+3) Give them an expirey so that they dissapear after a while
