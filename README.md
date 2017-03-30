@@ -70,3 +70,9 @@ Some example code for the Monkey2 programming language
 1) Create a new RockObject class that extends Gameobject
 2) Use Chipmunk to handle the physics
 3) Give them an expirey so that they dissapear after a while
+
+### Part 13 - Create a tractor beam that can suck up the rocks
+1) Create the TractorBeam class and set up the activate/deactive methods
+2) Edit the player class to accomodate the tractor beam and add controls so that the it can be fired with right mouse
+3) Create a chipmunk segment query to handle the tractor beam hitting the map tiles
+4) Create a shape query to handle the rocks touching the beam and getting sucked up
