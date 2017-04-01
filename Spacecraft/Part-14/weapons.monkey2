@@ -240,14 +240,18 @@ Class TractorBeam Extends Weapon
 		'Create the chipmunk area for the tractor beam. It will be a poly so that we can make a triangle shape so the end of
 		'the beam is wider then the start. Also note that we attach it to the Player's object, so that it will move and rotate
 		'With the player automatically.
-		BeamArea = cpPolyShapeNew(User.Body, 3, New cpVect[](cpv(0.0,0.0),cpv(-15.0,-1.0),cpv(15.0,-1.0)).Data, cpTransformScale(1, Length), 1.0)
+		
+		'Prepare the verts for the tractor beam sensor
+		Local verts:=New cpVect[3]
+		verts[0] = cpv(0.0, 0.0)
+		verts[1] = cpv(-15.0, -1.0)
+		verts[2] = cpv(15.0, -1.0)
+		BeamArea = cpPolyShapeNew(User.Body, 3, verts.Data, cpTransformScale(1, Length), 0.0)
 		'Make it a chipmunk sensor. This means that it won't interact with other objects like it's a physical object, instead
 		'it will just sense if other objects are overlapping.
 		BeamArea.Sensor = True
 		'Set the filter for the beam area.
 		cpShapeSetFilter(BeamArea, cpShapeFilterNew(ULong(0), Utilities, Rocks|Utilities|MapTiles))
-		'Scale the triangle beam area so the lenght matches what we want
-		cpShapeUpdate(BeamArea,cpTransformScale(Length, 1))
 		'Add the beam area to the Space.
 		User.Game.Space.AddShape(BeamArea)
 	End Method
