@@ -76,3 +76,11 @@ Some example code for the Monkey2 programming language
 2) Edit the player class to accomodate the tractor beam and add controls so that the it can be fired with right mouse
 3) Create a chipmunk segment query to handle the tractor beam hitting the map tiles
 4) Create a shape query to handle the rocks touching the beam and getting sucked up
+
+### Part 14 - Make the player able to absorb the rocks with an effect
+
+1) Add a Chipmunk sensor to the player
+
+2) Set up a collision handler for when the sensor hits a rock
+
+3) Add an effect for when a rock is hit and use a lambda to position it as the player moves about
